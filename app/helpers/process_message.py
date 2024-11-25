@@ -1,4 +1,3 @@
-from app.models.alice_tlp_data import AliceTLPData
 import json
 
 def process_message(message: str):
