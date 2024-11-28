@@ -19,15 +19,17 @@ class TaskAssignmentTableManager:
         delivery_deadline TEXT,
         complaint_deadline TEXT,
         elapsed_time INTEGER DEFAULT 0,
-        delivered_in_time BOOLEAN DEFAULT NULL, -- 'delivered' or 'expired'
+        delivered_in_time TEXT DEFAULT NULL, -- 'delivered' or 'expired'
         complaint_id INTEGER DEFAULT NULL,
         response_power INTEGER DEFAULT 0,
         complaint_time TEXT DEFAULT NULL,
-        validity BOOLEAN DEFAULT NULL, -- 'good' or 'bad'
+        validity TEXT DEFAULT NULL, -- 'good' or 'bad'
         solver_id INTEGER,
-        task_key INTEGER NOT NULL
+        task_key INTEGER NOT NULL,
+        FOREIGN KEY (task_id) REFERENCES tasks (id),
+        FOREIGN KEY (solver_id) REFERENCES solvers (id)
         """
-        await self.db_manager.create_table('task_assignments', schema)
+        await self.db_manager.create_table("task_assignments", schema)
 
     async def add_task_assignment(
         self,
@@ -47,7 +49,7 @@ class TaskAssignmentTableManager:
         Add a new task assignment to the database.
         """
         await self.db_manager.insert(
-            'task_assignments',
+            "task_assignments",
             (
                 None,
                 task_id,
@@ -63,7 +65,7 @@ class TaskAssignmentTableManager:
                 validity,
                 solver_id,
                 task_key,
-            )
+            ),
         )
 
     async def update_task_assignment(self, assignment_id, updates):
@@ -72,15 +74,15 @@ class TaskAssignmentTableManager:
         """
         set_clause = ", ".join([f"{key} = ?" for key in updates.keys()])
         params = list(updates.values()) + [assignment_id]
-        await self.db_manager.update('task_assignments', set_clause, 'id = ?', params)
+        await self.db_manager.update("task_assignments", set_clause, "id = ?", params)
 
     async def get_task_assignment(self, assignment_id):
         """
         Retrieve a task assignment's data by its ID.
         """
         rows = await self.db_manager.read(
-            'SELECT * FROM task_assignments WHERE id = ?',
-            (assignment_id,)
+            "SELECT * FROM task_assignments WHERE id = ?",
+            (assignment_id,),
         )
         return dict(rows[0]) if rows else None
 
@@ -89,8 +91,8 @@ class TaskAssignmentTableManager:
         Retrieve all assignments for a specific task.
         """
         rows = await self.db_manager.read(
-            'SELECT * FROM task_assignments WHERE task_id = ?',
-            (task_id,)
+            "SELECT * FROM task_assignments WHERE task_id = ?",
+            (task_id,),
         )
         return [dict(row) for row in rows]
 
@@ -101,8 +103,8 @@ class TaskAssignmentTableManager:
         :return: List of dictionaries representing the task assignments.
         """
         rows = await self.db_manager.read(
-            'SELECT * FROM task_assignments WHERE solver_id = ?',
-            (solver_id,)
+            "SELECT * FROM task_assignments WHERE solver_id = ?",
+            (solver_id,),
         )
         return [dict(row) for row in rows]
 
@@ -110,4 +112,4 @@ class TaskAssignmentTableManager:
         """
         Delete a task assignment by its ID.
         """
-        await self.db_manager.delete('task_assignments', 'id = ?', (assignment_id,))
+        await self.db_manager.delete("task_assignments", "id = ?", (assignment_id,))

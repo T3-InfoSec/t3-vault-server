@@ -17,14 +17,19 @@ class TaskTableManager:
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         created_at TEXT DEFAULT (DATETIME('now')),
         client_id INTEGER DEFAULT 0,
-        difficulty INTEGER,
-        parameter_t BIGINT,
-        input_fingerprint INTEGER,
-        assignments_count INTEGER DEFAULT 0
+        difficulty INTEGER NOT NULL,
+        parameter_t BIGINT NOT NULL,
+        input_fingerprint INTEGER NOT NULL,
+        first_assignment_id INTEGER DEFAULT NULL,
+        second_assignment_id INTEGER DEFAULT NULL,
+        assignments_count INTEGER DEFAULT 0,
+        payment_info_id INTEGER DEFAULT NULL
         """
         await self.db_manager.create_table("tasks", schema)
 
-    async def add_task(self, difficulty, parameter_t, created_at=None, client_id=0):
+    async def add_task(
+        self, difficulty, parameter_baseg, product, parameter_t, created_at, client_id=0
+    ):
         """
         Add a new task to the database.
         :param difficulty: The difficulty level of the task (integer).
@@ -35,21 +40,23 @@ class TaskTableManager:
         if not created_at:
             created_at = "DATETIME('now')"
 
-        # Prepare input string for hash generation
-        input_string = f"{client_id or 0}:{created_at}:{parameter_t}"
-
+        # Generate a cryptographic fingerprint for the task's input
+        input_string = f"{client_id}:{created_at}:{parameter_baseg}:{product}"
         input_fingerprint = generate_secure_hash(input_string)
 
         await self.db_manager.insert(
             "tasks",
             (
-                None,
-                created_at,
-                client_id,
-                difficulty,
-                parameter_t,
-                input_fingerprint,
-                0,
+                None,  # id (autoincrement)
+                created_at,  # created_at
+                client_id,  # client_id
+                difficulty,  # difficulty
+                parameter_t,  # parameter_t
+                input_fingerprint,  # input_fingerprint
+                None,  # first_assignment_id
+                None,  # second_assignment_id
+                0,  # assignments_count
+                None,  # payment_info_id
             ),
         )
 

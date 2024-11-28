@@ -22,7 +22,8 @@ class SolverTableManager:
         complaints_won INTEGER DEFAULT 0,
         success_rate FLOAT DEFAULT 0.0,
         computation_power_score FLOAT DEFAULT 0.0,
-        reputation_score FLOAT DEFAULT 0.0
+        reputation_score FLOAT DEFAULT 0.0,
+        micropayment INTEGER DEFAULT NULL
         """
         await self.db_manager.create_table('solvers', schema)
 
@@ -92,37 +93,3 @@ class SolverTableManager:
         :param solver_id: The solver's unique DB key (integer).
         """
         await self.db_manager.delete('solvers', 'id = ?', (solver_id,))
-
-
-# # Add or update a solver
-# await solver_manager.add_or_update_solver(
-#     fingerprint=123456789,
-#     tasks_taken=5,
-#     tasks_delivered=4,
-#     tasks_expired=1,
-#     tasks_not_complained_about=3,
-#     tasks_complained_about=2,
-#     complaints_won=1,
-#     success_rate=0.8,
-#     computation_power_score=150.0,
-#     reputation_score=85.0
-# )
-
-# # Retrieve a solver by fingerprint
-# solver = await solver_manager.get_solver_by_fingerprint(123456789)
-# print(solver)
-
-# # Update solver data (excluding fingerprint)
-# await solver_manager.update_solver(
-#     solver_id=1,
-#     updates={"tasks_taken": 10, "success_rate": 0.9}
-# )
-
-# # Try updating fingerprint (raises error)
-# try:
-#     await solver_manager.update_solver(
-#         solver_id=1,
-#         updates={"fingerprint": 987654321}
-#     )
-# except ValueError as e:
-#     print(e)  # Output: The 'fingerprint' field cannot be updated.

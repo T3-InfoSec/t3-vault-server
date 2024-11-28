@@ -1,6 +1,8 @@
 import aiosqlite
 from contextlib import asynccontextmanager
 
+from app.datasource.helpers.initialise_db import InitialiseDatabase
+
 class AsyncDatabaseManager:
     def __init__(self, db_path):
         self.db_path = db_path
@@ -39,7 +41,7 @@ class AsyncDatabaseManager:
         :param values: Tuple of values to insert, e.g., (1, 'Alice')
         """
         conn = await self.get_connection()
-        placeholders = ", ".join(["?"] * len(values))  # Generate placeholders for the values
+        placeholders = ", ".join(["?"] * len(values))
         query = f"INSERT INTO {table_name} VALUES ({placeholders})"
         async with conn.cursor() as cursor:
             await cursor.execute(query, values)
@@ -89,42 +91,10 @@ class AsyncDatabaseManager:
 
 
 
-# Example Usage
-async def main():
-    db_manager = AsyncDatabaseManager('t3.db')
-    await db_manager.connect()
-
-    # Create a table
-    await db_manager.create_table('users', 'id INTEGER PRIMARY KEY, name TEXT')
-
-    # Insert data
-    await db_manager.insert('users', (1, 'Alice'))
-    await db_manager.insert('users', (2, 'Bob'))
-
-    # Read data
-    rows = await db_manager.read('SELECT * FROM users')
-    for row in rows:
-        print(dict(row))
-
-    # Update data
-    await db_manager.update('users', 'name = ?', 'id = ?', ('Charlie', 2))
-
-    # Read data again
-    rows = await db_manager.read('SELECT * FROM users')
-    for row in rows:
-        print(dict(row))
-
-    # Delete data
-    await db_manager.delete('users', 'id = ?', (1,))
-
-    # Read data after deletion
-    rows = await db_manager.read('SELECT * FROM users')
-    for row in rows:
-        print(dict(row))
-
-    # Close the connection
-    await db_manager.close()
-
-# Run in an async environment
-import asyncio
-asyncio.run(main())
+async def startDb():
+    # Path to your database file
+    db_path = "data/t3.db"    
+    db_manager = AsyncDatabaseManager(db_path)
+    await db_manager.connect() 
+    database_initializer = InitialiseDatabase(db_manager)    
+    await database_initializer.initialize_database()
