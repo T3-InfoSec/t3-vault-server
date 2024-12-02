@@ -1,7 +1,8 @@
 import asyncio
 
-from app.datasource.db import startDb
+from app.datasource.db_manager import startDb
 from app.websocket.server import start_ws_server
+
 
 
 async def main():

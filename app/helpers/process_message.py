@@ -13,8 +13,8 @@ def process_message(message: str):
                     or None for invalid JSON messages.
     """
     try:        
-        if message == "x1Zf0o115HelloTestKey":
-            return "handshake_response"        
+        if message.__contains__("fn"):                        
+            return message
         json.loads(message)
         return message
 
@@ -29,3 +29,6 @@ def process_message(message: str):
 #     "product": 30,
 #     "t": 5
 # }
+
+# handshake is going to be the public key of bellow
+# x1Zf03-(client_device_id[8 chars])-yc

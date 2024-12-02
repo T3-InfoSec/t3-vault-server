@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 class TaskAssignmentTableManager:
     def __init__(self, db_manager):
         """
@@ -25,11 +28,12 @@ class TaskAssignmentTableManager:
         complaint_time TEXT DEFAULT NULL,
         validity TEXT DEFAULT NULL, -- 'good' or 'bad'
         solver_id INTEGER,
-        task_key INTEGER NOT NULL,
+        task_key binary(16) NOT NULL,
         FOREIGN KEY (task_id) REFERENCES tasks (id),
         FOREIGN KEY (solver_id) REFERENCES solvers (id)
         """
         await self.db_manager.create_table("task_assignments", schema)
+
 
     async def add_task_assignment(
         self,
@@ -45,15 +49,18 @@ class TaskAssignmentTableManager:
         delivered_in_time=None,
         validity=None,
     ):
+        created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
         """
-        Add a new task assignment to the database.
+        Add a new task assignment to the database and return the created assignment.
         """
+        # Insert the new task assignment
         await self.db_manager.insert(
             "task_assignments",
             (
-                None,
+                None,  # id (autoincrement)
                 task_id,
-                None,  # created_at is auto-set
+                created_at,
                 delivery_time,
                 delivery_deadline,
                 complaint_deadline,
@@ -67,6 +74,14 @@ class TaskAssignmentTableManager:
                 task_key,
             ),
         )
+
+        # Retrieve the last inserted task assignment
+        row = await self.db_manager.read(
+            "SELECT * FROM task_assignments WHERE ROWID = last_insert_rowid()"
+        )
+
+        # Return the newly created task assignment as a dictionary
+        return dict(row[0]) if row else None
 
     async def update_task_assignment(self, assignment_id, updates):
         """
@@ -86,13 +101,13 @@ class TaskAssignmentTableManager:
         )
         return dict(rows[0]) if rows else None
 
-    async def get_assignments_by_task(self, task_id):
+    async def get_assignments_by_task(self, task_key):
         """
         Retrieve all assignments for a specific task.
         """
         rows = await self.db_manager.read(
-            "SELECT * FROM task_assignments WHERE task_id = ?",
-            (task_id,),
+            "SELECT * FROM task_assignments WHERE task_key = ?",
+            (task_key,),
         )
         return [dict(row) for row in rows]
 

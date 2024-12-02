@@ -1,3 +1,6 @@
+from app.datasource.helpers.hash_helper import generate_secure_hash
+
+
 class SolverTableManager:
     def __init__(self, db_manager):
         """
@@ -26,14 +29,14 @@ class SolverTableManager:
         micropayment INTEGER DEFAULT NULL
         """
         await self.db_manager.create_table('solvers', schema)
-
-    async def add_or_update_solver(self, fingerprint, **fields):
+    async def add_or_update_solver(self, fingerprint_input, **fields):
         """
         Add a new solver or update existing fields (except 'fingerprint') if the solver exists.
         :param fingerprint: The unique fingerprint of the solver (integer).
         :param fields: Additional fields to insert or update.
         """
-        # Check if the solver with the given fingerprint exists
+        fingerprint = generate_secure_hash(fingerprint_input)
+
         existing_solver = await self.get_solver_by_fingerprint(fingerprint)
 
         if existing_solver:
@@ -42,13 +45,15 @@ class SolverTableManager:
             if updates:
                 set_clause = ", ".join([f"{key} = ?" for key in updates.keys()])
                 params = list(updates.values()) + [fingerprint]
-                await self.db_manager.update('solvers', set_clause, 'fingerprint = ?', params)
+                query = f"UPDATE solvers SET {set_clause} WHERE fingerprint = ?"
+                await self.db_manager.custom_query(query, params)
         else:
-            # Add a new solver
+            # Insert a new solver
             columns = ", ".join(["fingerprint"] + list(fields.keys()))
             placeholders = ", ".join(["?"] * (len(fields) + 1))
             values = [fingerprint] + list(fields.values())
-            await self.db_manager.insert('solvers', columns, placeholders, values)
+            query = f"INSERT INTO solvers ({columns}) VALUES ({placeholders})"
+            await self.db_manager.custom_query(query, values)
 
     async def get_solver_by_id(self, solver_id):
         """

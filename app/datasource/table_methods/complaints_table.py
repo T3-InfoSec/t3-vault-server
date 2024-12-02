@@ -1,3 +1,4 @@
+from datetime import datetime
 from app.datasource.helpers.hash_helper import generate_secure_hash
 
 
@@ -16,13 +17,13 @@ class ComplaintTableManager:
         schema = """
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         created_at TEXT DEFAULT (DATETIME('now')),
-        client_id INTEGER DEFAULT NULL,
+        client_id binary(16) NOT NULL,
         solver_id INTEGER NOT NULL,
         arbiter_id INTEGER DEFAULT 3099,
         task_assignment_id INTEGER NOT NULL,
         solved_at TEXT DEFAULT NULL,
         result INTEGER DEFAULT NULL,
-        fingerprint INTEGER NOT NULL
+        fingerprint binary(16) UNIQUE NOT NULL
         """
         await self.db_manager.create_table('complaints', schema)
 
@@ -35,7 +36,7 @@ class ComplaintTableManager:
         :param solved_at: The resolution timestamp (string or None).
         :param result: The resolution result (0 or 1, or None if undecided).
         """
-        created_at = "DATETIME('now')"
+        created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         fingerprint = generate_complaint_fingerprint(client_id, solver_id, created_at, solved_at, result)
 
         await self.db_manager.insert(
