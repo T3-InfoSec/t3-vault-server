@@ -1,5 +1,7 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends
 from sqlalchemy.orm import Session
+
+from app.database.models.solver import Solver
 from .database.database import get_db, Base, engine
 from .services.connection_manager import ConnectionManager
 import json

@@ -5,17 +5,18 @@ from .main import app
 __version__ = "0.1.0"
 
 # app/database/__init__.py
-from .database import Base, engine, SessionLocal, get_db
-from .database.models import Client, Solver
+from .database.database import Base, engine, SessionLocal, get_db
+from .database.models.solver import Solver
+from .database.models.client import Client
 
 __all__ = ['Base', 'engine', 'SessionLocal', 'get_db', 'Client', 'Solver']
 
 # app/services/__init__.py
-from .connection_manager import ConnectionManager
+from .services.connection_manager import ConnectionManager
 
 __all__ = ['ConnectionManager']
 
 # app/utils/__init__.py
-from .encryption import Encryption
+from .utils.encryption import Encryption
 
 __all__ = ['Encryption']

@@ -3,7 +3,8 @@ from fastapi import WebSocket
 from typing import Dict, Optional
 import json
 from ..utils.encryption import Encryption
-from ..database.models import Client, Solver
+from ..database.models.client import Client
+from ..database.models.solver import Solver
 from sqlalchemy.orm import Session
 
 class ConnectionManager:
