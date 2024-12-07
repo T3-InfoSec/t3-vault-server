@@ -12,9 +12,13 @@ class ConnectionManager:
         self._solvers: Dict[str, WebSocket] = {}
         self.encryption = Encryption()
     
-    async def connect_client(self, websocket: WebSocket, client_id: str, db: Session) -> None:
+    async def connect_client(self, websocket: WebSocket, client_key: str, db: Session) -> None:
         await websocket.accept()
-        self._clients[client_id] = websocket
+        
+        # Generate fingerprint from client key
+        client_id = self.encryption.generate_fingerprint(client_key)
+        
+        self._clients[self.encryption.fingerprint_to_hex(client_id)] = websocket
         
         # Update client connection status in database
         client = db.query(Client).filter(Client.client_id == client_id).first()
@@ -30,9 +34,13 @@ class ConnectionManager:
             client.connection_id = str(id(websocket))
         db.commit()
     
-    async def connect_solver(self, websocket: WebSocket, solver_id: str, db: Session) -> None:
+    async def connect_solver(self, websocket: WebSocket, solver_key: str, db: Session) -> None:
         await websocket.accept()
-        self._solvers[solver_id] = websocket
+        
+        # Generate fingerprint from solver key
+        solver_id = self.encryption.generate_fingerprint(solver_key)
+        
+        self._solvers[self.encryption.fingerprint_to_hex(solver_id)] = websocket
         
         # Update solver connection status in database
         solver = db.query(Solver).filter(Solver.solver_id == solver_id).first()
@@ -48,30 +56,42 @@ class ConnectionManager:
             solver.connection_id = str(id(websocket))
         db.commit()
     
-    async def disconnect_client(self, client_id: str, db: Session) -> None:
-        if client_id in self._clients:
-            del self._clients[client_id]
+    async def disconnect_client(self, client_key: str, db: Session) -> None:
+        client_id = self.encryption.generate_fingerprint(client_key)
+        hex_id = self.encryption.fingerprint_to_hex(client_id)
+        
+        if hex_id in self._clients:
+            del self._clients[hex_id]
             client = db.query(Client).filter(Client.client_id == client_id).first()
             if client:
                 client.is_connected = False
                 client.connection_id = None
                 db.commit()
     
-    async def disconnect_solver(self, solver_id: str, db: Session) -> None:
-        if solver_id in self._solvers:
-            del self._solvers[solver_id]
+    async def disconnect_solver(self, solver_key: str, db: Session) -> None:
+        solver_id = self.encryption.generate_fingerprint(solver_key)
+        hex_id = self.encryption.fingerprint_to_hex(solver_id)
+        
+        if hex_id in self._solvers:
+            del self._solvers[hex_id]
             solver = db.query(Solver).filter(Solver.solver_id == solver_id).first()
             if solver:
                 solver.is_online = False
                 solver.connection_id = None
                 db.commit()
 
-    async def send_to_client(self, client_id: str, message: dict) -> None:
-        if client_id in self._clients:
+    async def send_to_client(self, client_key: str, message: dict) -> None:
+        client_id = self.encryption.generate_fingerprint(client_key)
+        hex_id = self.encryption.fingerprint_to_hex(client_id)
+        
+        if hex_id in self._clients:
             encrypted_message = self.encryption.encrypt(json.dumps(message))
-            await self._clients[client_id].send_bytes(encrypted_message)
+            await self._clients[hex_id].send_bytes(encrypted_message)
     
-    async def send_to_solver(self, solver_id: str, message: dict) -> None:
-        if solver_id in self._solvers:
+    async def send_to_solver(self, solver_key: str, message: dict) -> None:
+        solver_id = self.encryption.generate_fingerprint(solver_key)
+        hex_id = self.encryption.fingerprint_to_hex(solver_id)
+        
+        if hex_id in self._solvers:
             encrypted_message = self.encryption.encrypt(json.dumps(message))
-            await self._solvers[solver_id].send_bytes(encrypted_message)
+            await self._solvers[hex_id].send_bytes(encrypted_message)
