@@ -1,0 +1,9 @@
+fastapi==0.109.2
+uvicorn==0.27.1
+sqlalchemy==2.0.25
+pydantic==2.6.1
+pydantic-settings==2.1.0
+cryptography==42.0.2
+python-dotenv==1.0.0
+websockets==12.0
+typing-extensions==4.9.0
