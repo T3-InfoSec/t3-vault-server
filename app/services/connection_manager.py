@@ -12,6 +12,7 @@ class ConnectionManager:
         self._clients: Dict[str, WebSocket] = {}
         self._solvers: Dict[str, WebSocket] = {}
         self.encryption = Encryption()
+        
     
     async def connect_client(self, websocket: WebSocket, client_key: str, db: Session) -> None:
         await websocket.accept()
