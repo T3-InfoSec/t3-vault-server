@@ -2,9 +2,9 @@ from sqlalchemy import (
     Column,
     Integer,
     LargeBinary,
-    DateTime,
-    BigInteger,
+    DateTime,    
     ForeignKey,
+    String,
 )
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -17,12 +17,12 @@ class Task(Base):
     db_key = Column(Integer, primary_key=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     client_id = Column(LargeBinary(16), ForeignKey("clients.client_id"), nullable=False)
-    difficulty = Column(Integer, nullable=False)
-    parameter_t = Column(BigInteger, nullable=False)
+    difficulty = Column(String, nullable=False)
+    parameter_t = Column(String, nullable=False)
     # encrypt later
-    parameter_product = Column(BigInteger, nullable=False)
+    parameter_product = Column(String, nullable=False)
     # encrypt later
-    parameter_baseg = Column(BigInteger, nullable=False)
+    parameter_baseg = Column(String, nullable=False)
     fingerprint = Column(LargeBinary(16), nullable=False)
     first_assignment_id = Column(Integer, nullable=True)
     second_assignment_id = Column(Integer, nullable=True)
