@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 import json
 
 from app.database.database import get_db
-from app.database.models.message_type import MessageType
+from app.models.message_type import MessageType
 from app.services.connection_manager import ConnectionManager
 from app.services.message_handlers.handler import MESSAGE_TYPE_HANDLERS
 

@@ -1,6 +1,6 @@
 # app/services/connection_manager.py
 from fastapi import WebSocket
-from typing import Dict, Optional
+from typing import Dict
 import json
 from ..utils.encryption import Encryption
 from ..database.models.client import Client
@@ -89,7 +89,11 @@ class ConnectionManager:
         if hex_id in self._clients:
             encrypted_message = self.encryption.encrypt(json.dumps(message))
             await self._clients[hex_id].send_bytes(encrypted_message)
-    
+
+    async def send_to_client_hx(self, client_key_hx: str, message: dict) -> None:                
+        if client_key_hx in self._clients:
+            encrypted_message = self.encryption.encrypt(json.dumps(message))
+            await self._clients[client_key_hx].send_bytes(encrypted_message)   
     async def send_to_solver(self, solver_key: str, message: dict) -> None:
         solver_id = self.encryption.generate_fingerprint(solver_key)
         hex_id = self.encryption.fingerprint_to_hex(solver_id)
