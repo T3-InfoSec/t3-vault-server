@@ -7,3 +7,4 @@ cryptography==42.0.2
 python-dotenv==1.0.0
 websockets==12.0
 typing-extensions==4.9.0
+pycryptodome

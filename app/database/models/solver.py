@@ -8,7 +8,7 @@ class Solver(Base):
     
     db_key = Column(Integer, primary_key=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    solver_id = Column(BINARY(16), unique=True, nullable=False)  # fingerprint of cryptographic key
+    solver_id = Column(LargeBinary(16), unique=True, nullable=False)  # fingerprint of cryptographic key
     connection_id = Column(String, nullable=True)  # current websocket connection id
     is_online = Column(Boolean, default=False)
     tasks_taken = Column(Integer, default=0)

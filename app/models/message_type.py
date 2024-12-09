@@ -11,3 +11,9 @@ class MessageResponseType(Enum):
     TLP_RESPONSE = "tlpResponse"
     COMPLAINT_RESPONSE = "complaintResponse"
     EXIT_RESPONSE = "exitResponse"
+
+class MessageSolverResponseType(Enum):
+    PING = "ping"
+    TLP_RESPONSE = "tlpSolverResponse"
+    COMPLAINT_RESPONSE = "complaintSolverResponse"
+    STATUS_UPDATE = "statusUpdate"

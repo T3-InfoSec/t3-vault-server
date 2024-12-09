@@ -1,6 +1,7 @@
 from sqlalchemy import (
     Column,
     Integer,
+    LargeBinary,
     String,
     Boolean,
     DateTime,
@@ -16,7 +17,7 @@ from ..database import Base
 class TaskAssignment(Base):
     __tablename__ = "task_assignments"
     db_key = Column(Integer, primary_key=True)
-    task_id = Column(BINARY(16), ForeignKey("tasks.fingerprint"), nullable=False)
+    task_id = Column(LargeBinary(16), ForeignKey("tasks.fingerprint"), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     delivery_at = Column(DateTime, nullable=True)
     deadline = Column(DateTime, nullable=True)

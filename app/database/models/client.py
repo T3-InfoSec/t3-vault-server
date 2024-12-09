@@ -8,7 +8,7 @@ class Client(Base):
     
     db_key = Column(Integer, primary_key=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    client_id = Column(BINARY(16), unique=True, nullable=False)  # fingerprint of cryptographic key
+    client_id = Column(LargeBinary(16), unique=True, nullable=False)  # fingerprint of cryptographic key
     connection_id = Column(String, nullable=True)  # current websocket connection id
     is_connected = Column(Boolean, default=False)
     tasks_requested = Column(Integer, default=0)
