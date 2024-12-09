@@ -10,6 +10,7 @@ import logging
 
 
 from app.database.models.task_assignment import TaskAssignment
+from app.services import connection_manager
 from app.services.message_handlers.tlp_handler import (
     handle_tlp_task_assignment_assign_to_solver,
 )
@@ -36,12 +37,12 @@ def on_task_assignment_insert(
     session = Session(bind=connection)
 
     #
-    
+
     solver_id = target.solver_id
     print(f"New task assignment inserted with db_key: {target.db_key}")
     print(f"Solver ID: {solver_id}")
     print(f"Created at: {target.created_at}")
-
+    # get conn manager
     solver = session.query(Solver).filter_by(db_key=solver_id).first()
     task = session.query(Task).filter_by(db_key=target.db_key).first()
     handle_tlp_task_assignment_assign_to_solver(

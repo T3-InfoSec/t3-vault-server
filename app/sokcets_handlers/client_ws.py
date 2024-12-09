@@ -4,11 +4,13 @@ import json
 
 from app.database.database import get_db
 from app.models.message_type import MessageType
-from app.services.connection_manager import ConnectionManager
+
+from app.services.connection_manager import connection_manager
 from app.services.message_handlers.handler import MESSAGE_TYPE_HANDLERS
+from app.utils.encryption import Encryption
 
 
-connection_manager = ConnectionManager()
+
 
 
 async def client_websocket(
@@ -21,8 +23,9 @@ async def client_websocket(
 
         while True:
             # Receive and decrypt message
+            enc = Encryption()
             encrypted_data = await websocket.receive_text()
-            message = json.loads(connection_manager.encryption.decrypt(encrypted_data))
+            message = json.loads(enc.decrypt(encrypted_data))
             print(f"Received message: {message}")
 
             # Get message type and data

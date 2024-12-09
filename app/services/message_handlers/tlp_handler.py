@@ -4,7 +4,7 @@ from app.database.database import get_db
 from app.database.models.solver import Solver
 from app.database.models.task_assignment import TaskAssignment
 from app.models.message_type import MessageResponseType, MessageType
-from app.services.connection_manager import ConnectionManager
+from app.services.connection_manager import ConnectionManager,connection_manager
 from sqlalchemy.orm import Session
 from app.database.models.task import Task
 from app.utils.encryption import Encryption
@@ -56,10 +56,10 @@ def handle_tlp_task_assignment_creation(task: Task, db: Session):
 
 
 def handle_tlp_task_assignment_assign_to_solver(
-    assignment: TaskAssignment, solver: Solver, task: Task, db: Session
+    assignment: TaskAssignment, solver: Solver, task: Task, db: Session,
+    
 ):
-    print(f"Handling TLP task assignment for task {task.db_key}")
-
+    print(f"Handling TLP task assignment for task {task.db_key}")    
     solver_fingerprint = solver.solver_id
     
     t = task.parameter_t
@@ -72,10 +72,9 @@ def handle_tlp_task_assignment_assign_to_solver(
     }
     # make only this async so i can await
     loop = asyncio.get_event_loop()
-    loop.create_task(ConnectionManager().send_to_solver_hx(fingerprint=solver_fingerprint, message=message))
+    loop.create_task(connection_manager.send_to_solver_hx(fingerprint=solver_fingerprint, message=message))
     print("Task assignment handling scheduled")
-
-    print("Handling TLP task assignment")
+    
 
 
 # response_data = {"answer": "123", "fingerprint": "1234f"}

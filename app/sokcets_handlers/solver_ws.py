@@ -4,11 +4,11 @@ import json
 
 from app.database.database import get_db
 from app.database.models.solver import Solver
+from app.services.connection_manager import connection_manager
 from app.models.message_type import MessageSolverResponseType, MessageType
-from app.services.connection_manager import ConnectionManager
 from app.services.message_handlers.handler import MESSAGE_SOLVER_RESPONSE_TYPE_HANDLERS, MESSAGE_TYPE_HANDLERS
+from app.utils.encryption import Encryption
 
-connection_manager = ConnectionManager()
 
 
 async def solver_websocket(
@@ -16,11 +16,12 @@ async def solver_websocket(
 ):
     try:
         await connection_manager.connect_solver(websocket, solver_id, db)
-
+        enc = Encryption()
+        
         while True:
             # Receive and decrypt message
             encrypted_data = await websocket.receive_text()
-            message = json.loads(connection_manager.encryption.decrypt(encrypted_data))
+            message = json.loads(enc.decrypt(encrypted_data))
             # Get message type and data
             message_type = message.get("type")
             data = message.get("data", {})
