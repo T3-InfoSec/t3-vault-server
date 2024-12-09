@@ -17,4 +17,4 @@ app.add_api_websocket_route("/ws/solver/{solver_id}", solver_ws.solver_websocket
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, ssl_keyfile="cert/key.pem", ssl_certfile="cert/cert.pem")
+    uvicorn.run(app, host="0.0.0.0", port=8000, ssl_keyfile="../demo_cert/key.pem", ssl_certfile="../demo_cert/cert.pem")
