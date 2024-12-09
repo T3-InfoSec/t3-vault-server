@@ -10,7 +10,6 @@ import logging
 
 
 from app.database.models.task_assignment import TaskAssignment
-from app.services import connection_manager
 from app.services.message_handlers.tlp_handler import (
     handle_tlp_task_assignment_assign_to_solver,
 )
@@ -52,3 +51,12 @@ def on_task_assignment_insert(
         db=session,
     )
     # Add your custom logic here
+
+def update_solvers_rep( connection: Connection):
+    # Get all solvers
+    session = Session(bind=connection)
+
+    solvers = session.query(Solver).one()
+    # Update each solver's reputation
+    for solver in solvers:
+        solver.reputation = 0.5

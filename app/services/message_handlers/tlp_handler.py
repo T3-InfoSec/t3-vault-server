@@ -30,7 +30,7 @@ async def handle_tlp_task_creation(
             parameter_product=parameter_product,
             parameter_baseg=parameter_baseg,
             fingerprint=fingerprint,
-            difficulty=1,
+            difficulty=1, # TODO: make this dynamic based on the difficulty of the task
         ),
     )
     db.commit()

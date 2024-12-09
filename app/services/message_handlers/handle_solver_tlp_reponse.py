@@ -1,4 +1,5 @@
 from datetime import datetime
+from app.database.models.solver import Solver
 from app.database.models.task import Task
 from app.database.models.task_assignment import TaskAssignment
 from app.services.connection_manager import ConnectionManager
@@ -33,6 +34,11 @@ async def handle_solver_tlp_reponse(
     task_assignment.delivery_at = delivered_at
     task_assignment.elapsed_time = total_seconds
     task_assignment.validity = True
+    # update solver's rep
+    # get solver 
+    solver = db.query(Solver).filter(Solver.solver_id == solver_id).first()
+
+    solver.reputation_score = 0.05 * solver.success_rate + 0.95 * solver.reputation_score
 
     # Commit the changes to the database
     db.commit()
