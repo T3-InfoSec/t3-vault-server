@@ -10,6 +10,7 @@ class ConnectorType(Enum):
 
 class PaymentType(Enum):
     LN = "Lightning"
+    
     MONERO = "Monero"
 
 
