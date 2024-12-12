@@ -19,10 +19,14 @@ async def handle_tlp_task_creation(
     current_datetime = datetime.now()
     parameter_t = data.get("t")
     parameter_baseg = data.get("baseg")
-    parameter_product = data.get("product") 
-    dificulty = (math.floor(math.log2(int(parameter_product))) + 1) / (int(parameter_t) or 1)
+    parameter_product = data.get("product")
+    dificulty = (math.floor(math.log2(int(parameter_product))) + 1) / (
+        int(parameter_t) or 1
+    )
 
-    print(f"parameter_t: {parameter_t} parameter_baseg: {parameter_baseg} parameter_product: {parameter_product}")
+    print(
+        f"parameter_t: {parameter_t} parameter_baseg: {parameter_baseg} parameter_product: {parameter_product}"
+    )
     fingerprint_string = f"{parameter_baseg}{parameter_product}{current_datetime}"
     client_id_f = enc.generate_fingerprint(client_id)
     fingerprint = enc.generate_fingerprint(fingerprint_string)
@@ -44,17 +48,16 @@ async def handle_tlp_task_creation(
 
 
 def handle_tlp_task_assignment_creation(task: Task, db: Session):
-    # querry a solver that is is_online=1; later make sure to get the best reputation    
+    # querry a solver that is is_online=1; later make sure to get the best reputation
     solver = db.query(Solver).filter_by(is_online=1).first()
     if not solver:
         print("No solver found")
         # when a solver comes online later we can revisit this
         return
-    solver.tasks_taken  = solver.tasks_taken + 1
-    # 
+    #
     deadline = datetime.now() + timedelta(hours=8)
     complaint_deadline = datetime.now() + timedelta(hours=24)
-    
+
     task_assignment = TaskAssignment(
         task_id=task.fingerprint,
         solver_id=solver.db_key,
@@ -67,13 +70,15 @@ def handle_tlp_task_assignment_creation(task: Task, db: Session):
 
     # get task
     task = db.query(Task).filter(Task.fingerprint == task.fingerprint).first()
-    if(task.first_assignment_id  is None):
+    if task.first_assignment_id is None:
         task.first_assignment_id = task_assignment.db_key
-    else:        
-        if(task.second_assignment_id is None):
+    else:
+        if task.second_assignment_id is None:
             task.second_assignment_id = task_assignment.db_key
     task.num_assignments = task.num_assignments + 1
     db.commit()
+
+
 def handle_tlp_task_assignment_assign_to_solver(
     assignment: TaskAssignment,
     solver: Solver,
@@ -82,6 +87,7 @@ def handle_tlp_task_assignment_assign_to_solver(
 ):
     print(f"Handling TLP task assignment for task {task.db_key}")
     solver_fingerprint = solver.solver_id
+
     enc = Encryption()
     t = task.parameter_t
     product = enc.decrypt(task.parameter_product)
@@ -96,11 +102,13 @@ def handle_tlp_task_assignment_assign_to_solver(
             "assignment_key": assignment_key,
         },
     }
-    
+
     loop = asyncio.get_event_loop()
     loop.create_task(
         connection_manager.send_to_solver_hx(
             fingerprint=solver_fingerprint, message=message
         )
     )
+    solver.tasks_taken = solver.tasks_taken + 1
+    db.commit()
     print("Task assignment handling scheduled")

@@ -32,7 +32,7 @@ async def handle_solver_tlp_reponse(
     total_seconds = time_elapsed.total_seconds()
     deadline = task_assignment.deadline
     # a boolean checks if 
-    delivered_in_time = delivered_at < deadline
+    delivered_in_time = delivered_at < deadline    
     # Update task assignment fields
     task_assignment.delivery_at = delivered_at
     task_assignment.elapsed_time = total_seconds
@@ -41,9 +41,11 @@ async def handle_solver_tlp_reponse(
     # update solver's rep
     # get solver 
     solver = db.query(Solver).filter(Solver.solver_id == solver_id).first()
+    if not delivered_in_time:
+        solver.tasks_expired = solver.tasks_expired + 1
     solver.tasks_delivered  = solver.tasks_delivered + 1
-    solver.reputation_score = 0.05 * solver.success_rate + 0.95 * solver.reputation_score
-
+    # make better reputation score
+    solver.reputation_score = 0.05 * solver.success_rate + 1
     # Commit the changes to the database
     db.commit()
     # get client from assignment
