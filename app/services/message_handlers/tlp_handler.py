@@ -54,6 +54,7 @@ def handle_tlp_task_assignment_creation(task: Task, db: Session):
     # 
     deadline = datetime.now() + timedelta(hours=8)
     complaint_deadline = datetime.now() + timedelta(hours=24)
+    
     task_assignment = TaskAssignment(
         task_id=task.fingerprint,
         solver_id=solver.db_key,
@@ -64,7 +65,15 @@ def handle_tlp_task_assignment_creation(task: Task, db: Session):
     db.add(task_assignment)
     db.commit()
 
-
+    # get task
+    task = db.query(Task).filter(Task.fingerprint == task.fingerprint).first()
+    if(task.first_assignment_id  is None):
+        task.first_assignment_id = task_assignment.db_key
+    else:        
+        if(task.second_assignment_id is None):
+            task.second_assignment_id = task_assignment.db_key
+    task.num_assignments = task.num_assignments + 1
+    db.commit()
 def handle_tlp_task_assignment_assign_to_solver(
     assignment: TaskAssignment,
     solver: Solver,
