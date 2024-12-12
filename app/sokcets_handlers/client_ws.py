@@ -7,6 +7,7 @@ from app.models.message_type import MessageType
 
 from app.services.connection_manager import connection_manager
 from app.services.message_handlers.handler import MESSAGE_TYPE_HANDLERS
+from app.utils.boostrap_db_datas import bootstrap_data
 from app.utils.encryption import Encryption
 
 
@@ -18,7 +19,7 @@ async def client_websocket(
     client_id: str,
     db: Session = Depends(get_db)
 ):
-    try:
+    try:        
         await connection_manager.connect_client(websocket, client_id, db)
 
         while True:

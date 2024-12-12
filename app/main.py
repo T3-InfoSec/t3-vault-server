@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.database.database import Base, engine
-from app.services.connection_manager import ConnectionManager
+from app.services import connection_manager
 from app.sokcets_handlers import client_ws, solver_ws
 from app.database.events import init_events
 
