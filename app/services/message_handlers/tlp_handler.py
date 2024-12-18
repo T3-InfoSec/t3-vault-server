@@ -23,7 +23,7 @@ async def handle_tlp_task_creation(
     dificulty = (math.floor(math.log2(int(parameter_product))) + 1) / (
         int(parameter_t) or 1
     )
-
+    
     print(
         f"parameter_t: {parameter_t} parameter_baseg: {parameter_baseg} parameter_product: {parameter_product}"
     )

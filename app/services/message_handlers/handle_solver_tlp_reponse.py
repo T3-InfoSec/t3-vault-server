@@ -57,8 +57,8 @@ async def handle_solver_tlp_reponse(
     data = {
         "type": "tlpResponse",
         "data": {
-            "assignment_key": Encryption().fingerprint_to_hex(task_assignment.task_id),
-            "answer": answer,
+            "fingerprint": Encryption().fingerprint_to_hex(task_assignment.task_id),
+            "answer": str(answer),
         },
     }
     await connection_manager.send_to_client_hx(client_key_hx=client_id_hx, message=data)
