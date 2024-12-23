@@ -16,7 +16,9 @@ def bootstrap_data(session: Session):
             session.add(lightning)
 
         # Check and add Payment Reasons
-        reasons = ["TLP", "CONNECTION", "COMPLAINT"]
+         
+
+        reasons = ["SOLVER_SIGNUP", "CLIENT_SIGNUP", "TLP_PAYMENT"]
         existing_reasons = session.query(PaymentReason.description).filter(
             PaymentReason.description.in_(reasons)
         ).all()

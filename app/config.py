@@ -10,7 +10,7 @@ load_dotenv()
 
 class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./data/t3v.sqlite"
-    ENCRYPTION_KEY_PASSWORD: str
+    PLACEHOLDER_ENCRYPTION_KEY_PASSWORD: str
     class Config:
         env_file = ".env"
 
