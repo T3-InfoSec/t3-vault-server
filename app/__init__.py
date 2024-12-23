@@ -1,6 +1,5 @@
 # app/__init__.py
 from .config import settings
-from .main import app
 from app.database.events import task_event
 
 

@@ -34,9 +34,9 @@ class ConnectionManager:
         await websocket.accept()
 
         # Generate fingerprint from client key
-        client_id = self.encryption.generate_fingerprint(client_key)
+        client_id = self.encryption.hex_to_fingerprint(client_key)
         hex_id = self.encryption.fingerprint_to_hex(client_id)
-
+        print(f"Client ID: {client_key} and hex ID: {hex_id}")
         # Register the client in the connection manager
         self._clients[hex_id] = websocket
         logger.info(f"Client connected with hex ID: {hex_id}")
@@ -62,8 +62,9 @@ class ConnectionManager:
         await websocket.accept()
 
         # Generate fingerprint from solver key
-        solver_id = self.encryption.generate_fingerprint(solver_key)
+        solver_id = self.encryption.hex_to_fingerprint(solver_key)
         hex_id = self.encryption.fingerprint_to_hex(solver_id)
+        print(f"Client ID: {solver_key} and hex ID: {hex_id}")
 
         # Register the solver in the connection manager
         self._solvers[hex_id] = websocket
@@ -85,7 +86,7 @@ class ConnectionManager:
         """
         Disconnect a client and update its status in the database.
         """
-        client_id = self.encryption.generate_fingerprint(client_key)
+        client_id = self.encryption.hex_to_fingerprint(client_key)
         hex_id = self.encryption.fingerprint_to_hex(client_id)
 
         if hex_id in self._clients:
@@ -102,7 +103,7 @@ class ConnectionManager:
         """
         Disconnect a solver and update its status in the database.
         """
-        solver_id = self.encryption.generate_fingerprint(solver_key)
+        solver_id = self.encryption.hex_to_fingerprint(solver_key)
         hex_id = self.encryption.fingerprint_to_hex(solver_id)
 
         if hex_id in self._solvers:
@@ -119,7 +120,7 @@ class ConnectionManager:
         """
         Send a message to a connected client using its key.
         """
-        client_id = self.encryption.generate_fingerprint(client_key)
+        client_id = self.encryption.hex_to_fingerprint(client_key)
         hex_id = self.encryption.fingerprint_to_hex(client_id)
 
         if hex_id in self._clients:
@@ -138,9 +139,9 @@ class ConnectionManager:
         """
         Send a message to a connected solver using its key.
         """
-        solver_id = self.encryption.generate_fingerprint(solver_key)
+        solver_id = self.encryption.hex_to_fingerprint(solver_key)
         hex_id = self.encryption.fingerprint_to_hex(solver_id)
-        logger.info(f"Sending message to solver with hex ID: {hex_id}")        
+        logger.info(f"Sending message to solver with hex ID: {hex_id}")
 
         if hex_id in self._solvers:
             encrypted_message = self.encryption.encrypt(json.dumps(message))
@@ -157,5 +158,6 @@ class ConnectionManager:
             print("WELL FOUND SOLVER")
             encrypted_message = self.encryption.encrypt(json.dumps(message))
             await self._solvers[hex_id].send_bytes(encrypted_message)
+
 
 connection_manager = ConnectionManager()
