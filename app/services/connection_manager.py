@@ -124,7 +124,7 @@ class ConnectionManager:
         hex_id = self.encryption.fingerprint_to_hex(client_id)
 
         if hex_id in self._clients:
-            encrypted_message = self.encryption.encrypt(json.dumps(message),passsword=client_key)
+            encrypted_message = self.encryption.encrypt(json.dumps(message),password=client_key)
             await self._clients[hex_id].send_bytes(encrypted_message)
 
     async def send_to_client_hx(self, client_key_hx: str, message: dict) -> None:
@@ -132,7 +132,7 @@ class ConnectionManager:
         Send a message to a connected client using its hex ID.
         """
         if client_key_hx in self._clients:
-            encrypted_message = self.encryption.encrypt(json.dumps(message),passsword=client_key_hx)
+            encrypted_message = self.encryption.encrypt(json.dumps(message),password=client_key_hx)
             await self._clients[client_key_hx].send_bytes(encrypted_message)
 
     async def send_to_solver(self, solver_key: str, message: dict) -> None:
@@ -144,7 +144,7 @@ class ConnectionManager:
         logger.info(f"Sending message to solver with hex ID: {hex_id}")
 
         if hex_id in self._solvers:
-            encrypted_message = self.encryption.encrypt(json.dumps(message),passsword=solver_key)
+            encrypted_message = self.encryption.encrypt(json.dumps(message),password=solver_key)
             await self._solvers[hex_id].send_bytes(encrypted_message)
 
     async def send_to_solver_hx(self, fingerprint: bytes, message: dict) -> None:
@@ -156,7 +156,7 @@ class ConnectionManager:
         print(f"FOUND SOLVER {self._solvers}")
         if hex_id in self._solvers:
             print("WELL FOUND SOLVER")
-            encrypted_message = self.encryption.encrypt(json.dumps(message),passsword=hex_id)
+            encrypted_message = self.encryption.encrypt(json.dumps(message),password=hex_id)
             await self._solvers[hex_id].send_bytes(encrypted_message)
 
 

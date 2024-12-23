@@ -9,12 +9,12 @@ import os  # To generate a nonce
 
 class Encryption:
 
-    def __init__(self, password: str = None):
-        self.handle_password(password)
+    def __init__(self,):
+        print("Encryption class initialized")
 
     def handle_password(self, password: str = None):
-        if password is None:
-            password = settings.PLACEHOLDER_ENCRYPTION_KEY_PASSWORD.encode()
+        # if password is None:
+        password = settings.PLACEHOLDER_ENCRYPTION_KEY_PASSWORD.encode()
         self.key = hashlib.sha256(password).digest()
 
     def encrypt(self, plaintext, password: str = None):
