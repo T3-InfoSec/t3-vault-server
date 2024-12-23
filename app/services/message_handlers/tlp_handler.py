@@ -35,8 +35,8 @@ async def handle_tlp_task_creation(
         Task(
             client_id=client_id_f,
             parameter_t=parameter_t,
-            parameter_product=enc.encrypt(parameter_product),
-            parameter_baseg=enc.encrypt(parameter_baseg),
+            parameter_product=enc.encrypt(parameter_product,password=client_id),
+            parameter_baseg=enc.encrypt(parameter_baseg,password=client_id),
             fingerprint=fingerprint,
             difficulty=dificulty,
         ),
@@ -90,8 +90,8 @@ def handle_tlp_task_assignment_assign_to_solver(
 
     enc = Encryption()
     t = task.parameter_t
-    product = enc.decrypt(task.parameter_product)
-    baseg = enc.decrypt(task.parameter_baseg)
+    product = enc.decrypt(task.parameter_product, password=enc.fingerprint_to_hex(task.client_id))
+    baseg = enc.decrypt(task.parameter_baseg, password=enc.fingerprint_to_hex(task.client_id))
     assignment_key = assignment.db_key
     message = {
         "type": "tlpSolverRequest",

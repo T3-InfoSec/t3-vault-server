@@ -26,7 +26,7 @@ async def client_websocket(
             # Receive and decrypt message
             enc = Encryption()
             encrypted_data = await websocket.receive_text()
-            message = json.loads(enc.decrypt(encrypted_data))
+            message = json.loads(enc.decrypt(encrypted_data,password=client_id))
             print(f"Received message: {message}")
 
             # Get message type and data

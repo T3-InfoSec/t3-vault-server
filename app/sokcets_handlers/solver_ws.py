@@ -21,7 +21,7 @@ async def solver_websocket(
         while True:
             # Receive and decrypt message
             encrypted_data = await websocket.receive_text()
-            message = json.loads(enc.decrypt(encrypted_data))
+            message = json.loads(enc.decrypt(encrypted_data,password=solver_id))
             # Get message type and data
             message_type = message.get("type")
             data = message.get("data", {})
