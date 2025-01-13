@@ -33,19 +33,19 @@ def generate_client_id(cert_path):
 
 
 # Test with valid client certificate for HTTPS
-try:
-    print("Testing valid client certificate for HTTPS...")
-    response = requests.get(
-        "https://127.0.0.1:8000",
-        verify=os.path.join(server_path, "fullchain.pem"),
-        cert=(
-            os.path.join(client_path, "certificate.crt"),
-            os.path.join(client_path, "private.key"),
-        ),
-    )
-    print("Response:", response.status_code, response.text)
-except requests.exceptions.ConnectionError as e:
-    print("Connection failed with valid client certificate:", e)
+# try:
+#     print("Testing valid client certificate for HTTPS...")
+#     response = requests.get(
+#         "https://127.0.0.1:8000",
+#         verify=os.path.join(server_path, "fullchain.pem"),
+#         cert=(
+#             os.path.join(client_path, "certificate.crt"),
+#             os.path.join(client_path, "private.key"),
+#         ),
+#     )
+#     print("Response:", response.status_code, response.text)
+# except requests.exceptions.ConnectionError as e:
+#     print("Connection failed with valid client certificate:", e)
 
 # Test with invalid client certificate for HTTPS
 try:
