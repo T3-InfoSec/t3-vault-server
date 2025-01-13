@@ -3,7 +3,7 @@ import json
 import math
 from app.database.database import get_db
 from app.database.models.client import Client
-from app.database.models.solver import Solver
+from app.database.models.provider import Provider
 from app.database.models.task_assignment import TaskAssignment
 from app.services.connection_manager import ConnectionManager, connection_manager
 from sqlalchemy.orm import Session
@@ -49,7 +49,7 @@ async def handle_tlp_task_creation(
 
 def handle_tlp_task_assignment_creation(task: Task, db: Session):
     # querry a solver that is is_online=1; later make sure to get the best reputation
-    solver = db.query(Solver).filter_by(is_online=1).first()
+    solver = db.query(Provider).filter_by(is_online=1).first()
     if not solver:
         print("No solver found")
         # when a solver comes online later we can revisit this
@@ -81,7 +81,7 @@ def handle_tlp_task_assignment_creation(task: Task, db: Session):
 
 def handle_tlp_task_assignment_assign_to_solver(
     assignment: TaskAssignment,
-    solver: Solver,
+    solver: Provider,
     task: Task,
     db: Session,
 ):

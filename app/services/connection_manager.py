@@ -4,7 +4,7 @@ import json
 from sqlalchemy.orm import Session
 from app.utils.encryption import Encryption
 from app.database.models.client import Client
-from app.database.models.solver import Solver
+from app.database.models.provider import Provider
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -71,9 +71,9 @@ class ConnectionManager:
         logger.info(f"Solver connected with hex ID: {hex_id}")
 
         # Update solver connection status in database
-        solver = db.query(Solver).filter(Solver.solver_id == solver_id).first()
+        solver = db.query(Provider).filter(Provider.solver_id == solver_id).first()
         if not solver:
-            solver = Solver(
+            solver = Provider(
                 solver_id=solver_id, is_online=True, connection_id=str(id(websocket))
             )
             db.add(solver)
@@ -110,7 +110,7 @@ class ConnectionManager:
             del self._solvers[hex_id]
             logger.info(f"Solver disconnected with hex ID: {hex_id}")
 
-            solver = db.query(Solver).filter(Solver.solver_id == solver_id).first()
+            solver = db.query(Provider).filter(Provider.solver_id == solver_id).first()
             if solver:
                 solver.is_online = False
                 solver.connection_id = None

@@ -4,7 +4,7 @@ import json
 import time
 
 from app.database.database import get_db
-from app.database.models.solver import Solver
+from app.database.models.provider import Provider
 from app.services.connection_manager import connection_manager
 from app.models.message_type import MessageSolverResponseType
 from app.services.message_handlers.handler import MESSAGE_SOLVER_RESPONSE_TYPE_HANDLERS
@@ -90,7 +90,7 @@ async def solver_websocket(
 
 async def reduce_solver_reputation(solver_id: str, db: Session):
     """Reduce the reputation of the solver in the database."""
-    solver = db.query(Solver).filter(Solver.id == solver_id).first()
+    solver = db.query(Provider).filter(Provider.id == solver_id).first()
     if solver:
         solver.reputation_score = max(0, solver.reputation - 10)
         db.commit()

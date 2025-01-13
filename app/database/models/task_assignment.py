@@ -18,7 +18,7 @@ class TaskAssignment(Base):
     __tablename__ = "task_assignments"
     db_key = Column(Integer, primary_key=True)
     task_id = Column(LargeBinary(16), ForeignKey("tasks.fingerprint"), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.now)
     delivery_at = Column(DateTime, nullable=True)
     deadline = Column(DateTime, nullable=True)
     complaint_deadline = Column(DateTime, nullable=True)
@@ -30,5 +30,5 @@ class TaskAssignment(Base):
     response_power = Column(Integer, nullable=True)  # Solver's response
     complaint_at = Column(DateTime, nullable=True)  # Null if no complaint
     validity = Column(Boolean, nullable=True)  # True if response is valid
-    solver_id = Column(Integer, ForeignKey("solvers.db_key"), nullable=False)
+    solver_id = Column(Integer, ForeignKey("providers.db_key"), nullable=False)
     task_key = Column(Integer, ForeignKey("tasks.db_key"), nullable=False)

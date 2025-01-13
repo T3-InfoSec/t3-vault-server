@@ -1,7 +1,7 @@
 print("Task events module loaded - registering listeners")
 
 from sqlalchemy.orm import Session
-from app.database.models.solver import Solver
+from app.database.models.provider import Provider
 from app.database.models.task import Task
 from sqlalchemy import event
 from sqlalchemy.engine import Connection
@@ -42,7 +42,7 @@ def on_task_assignment_insert(
     print(f"Solver ID: {solver_id}")
     print(f"Created at: {target.created_at}")
     # get conn manager
-    solver = session.query(Solver).filter_by(db_key=solver_id).first()
+    solver = session.query(Provider).filter_by(db_key=solver_id).first()
     task = session.query(Task).filter_by(db_key=target.db_key).first()
     handle_tlp_task_assignment_assign_to_solver(
         assignment=target,
@@ -56,7 +56,7 @@ def update_solvers_rep( connection: Connection):
     # Get all solvers
     session = Session(bind=connection)
 
-    solvers = session.query(Solver).one()
+    solvers = session.query(Provider).one()
     # Update each solver's reputation
     for solver in solvers:
         solver.reputation = 0.5

@@ -1,6 +1,6 @@
 from datetime import datetime
 from app.database.models.client import Client
-from app.database.models.solver import Solver
+from app.database.models.provider import Provider
 from app.database.models.task import Task
 from app.database.models.task_assignment import TaskAssignment
 from app.services.connection_manager import ConnectionManager
@@ -40,7 +40,7 @@ async def handle_solver_tlp_reponse(
     task_assignment.delivered_in_time = delivered_in_time
     # update solver's rep
     # get solver 
-    solver = db.query(Solver).filter(Solver.solver_id == solver_id).first()
+    solver = db.query(Provider).filter(Provider.solver_id == solver_id).first()
     if not delivered_in_time:
         solver.tasks_expired = solver.tasks_expired + 1
     solver.tasks_delivered  = solver.tasks_delivered + 1

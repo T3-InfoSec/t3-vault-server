@@ -8,7 +8,7 @@ __version__ = "0.1.0"
 
 # app/database/__init__.py
 from .database.database import Base, engine, SessionLocal, get_db
-from .database.models.solver import Solver
+from .database.models.provider import Provider
 from .database.models.client import Client
 from .database.models.task import Task
 
@@ -18,7 +18,7 @@ __all__ = [
     "SessionLocal",
     "get_db",
     "Client",
-    "Solver",
+    "Provider",
     "Task",
 ]
 
